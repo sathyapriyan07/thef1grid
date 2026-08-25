@@ -27,5 +27,6 @@ export type Team = {
   points?: number;
   wins?: number;
   color_hex?: string;
+  logo_url?: string;
   color?: string;
 };

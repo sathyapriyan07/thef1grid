@@ -66,6 +66,11 @@ function Layout({ children }: { children: React.ReactNode }) {
     <main className="app-shell">
       <Header />
       {children}
+      <div className="kinetic-marquee global-marquee" aria-label="Formula One data stream">
+        <div className="marquee-track">
+          <span>THE F1 ZONE</span><b>*</b><span>FORMULA ONE ARCHIVE</span><b>*</b><span>DATA IN MOTION</span><b>*</b><span>THE F1 ZONE</span><b>*</b><span>FORMULA ONE ARCHIVE</span><b>*</b>
+        </div>
+      </div>
       <footer>
         <span>THE F1 ZONE / EST. 2025</span>
         <span>DATA SOURCE: JOLPICA F1 API</span>
@@ -145,6 +150,11 @@ function Dashboard() {
           </p>
         </div>
       </section>
+      <div className="kinetic-marquee stats-marquee" aria-label="Imported Formula One statistics">
+        <div className="marquee-track">
+          <span>{drivers.data?.length ?? 0} DRIVERS</span><b>*</b><span>{teams.data?.length ?? 0} TEAMS</span><b>*</b><span>{races.data?.length ?? 0} RACES</span><b>*</b><span>{drivers.data?.length ?? 0} DRIVERS</span><b>*</b><span>{teams.data?.length ?? 0} TEAMS</span><b>*</b><span>{races.data?.length ?? 0} RACES</span><b>*</b>
+        </div>
+      </div>
       <section className="hero-grid">
         <article className="next-race-panel">
           <div className="panel-top">

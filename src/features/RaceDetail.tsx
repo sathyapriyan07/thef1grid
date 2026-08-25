@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -43,11 +43,13 @@ function Table({
   rows,
   columns,
   empty,
+  driverLogos,
 }: {
   title: string;
   rows: Row[];
-  columns: Array<[string, (row: Row, index: number) => string | number]>;
+  columns: Array<[string, (row: Row, index: number) => ReactNode]>;
   empty: string;
+  driverLogos?: Map<string, string>;
 }) {
   return (
     <section className="race-detail-section">
@@ -80,6 +82,7 @@ function Table({
                   }
                   key={label}
                 >
+                  {label === "DRIVER" && driverLogos?.get(row.team_id ?? "") ? <img className="table-team-logo" src={driverLogos.get(row.team_id ?? "")} alt="" /> : null}
                   {render(row, index)}
                 </span>
               ))}
@@ -115,6 +118,10 @@ export default function RaceDetail() {
     () => new Map((teams.data ?? []).map((row) => [row.id, row.name])),
     [teams.data],
   );
+  const teamLogos = useMemo(
+    () => new Map((teams.data ?? []).flatMap((row) => row.logo_url ? [[row.id, row.logo_url] as [string, string]] : [])),
+    [teams.data],
+  );
   const filter = (rows: Row[] | undefined) =>
     (rows ?? []).filter((row) => row.race_id === id);
   const driver = (row: Row) =>
@@ -136,7 +143,7 @@ export default function RaceDetail() {
       </section>
     );
   return (
-    <section className="detail-page">
+    <section className="detail-page race-detail-page">
       <Link className="back-link" to="/races">
         ← Back to archive
       </Link>
@@ -152,10 +159,10 @@ export default function RaceDetail() {
         columns={[
           ["POS", (row, index) => row.position ?? index + 1],
           ["DRIVER", driver],
-          ["TEAM", team],
           ["PTS", (row) => row.points ?? 0],
           ["LAPS", (row) => row.laps ?? 0],
         ]}
+        driverLogos={teamLogos}
         empty="No race results imported for this race."
       />
       <Table
@@ -170,6 +177,7 @@ export default function RaceDetail() {
           ["Q3", (row) => row.q3 ?? "-"],
         ]}
         empty="No qualifying records imported for this race."
+        driverLogos={teamLogos}
       />
       <Table
         title="Sprint"
@@ -183,6 +191,7 @@ export default function RaceDetail() {
           ["LAPS", (row) => row.laps ?? 0],
         ]}
         empty="No sprint records imported for this race."
+        driverLogos={teamLogos}
       />
       <Table
         title="Pit stops"
@@ -198,6 +207,7 @@ export default function RaceDetail() {
           ],
         ]}
         empty="No pit stops imported for this race."
+        driverLogos={teamLogos}
       />
       <Table
         title="Lap chart"
@@ -209,6 +219,7 @@ export default function RaceDetail() {
           ["TIME", (row) => (row.time_ms ? timeOf(row.time_ms) : "-")],
         ]}
         empty="No lap records imported for this race."
+        driverLogos={teamLogos}
       />
     </section>
   );

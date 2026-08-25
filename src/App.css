@@ -2,7 +2,7 @@
 @font-face { font-family: 'Formula1'; src: url('/Formula1-Bold_web_0.ttf') format('truetype'); font-weight: 700; font-style: normal; font-display: swap; }
 .admin-crud { margin-top: 72px; }
 .record-form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 28px 0 4px; }.record-form label { display: grid; gap: 8px; color: #858684; font: 10px 'DM Mono'; text-transform: uppercase; }.record-form input, .record-form select { width: 100%; box-sizing: border-box; border: 1px solid #494a48; background: #1b1d1e; color: white; outline: 0; padding: 12px; font: 12px 'DM Mono'; }.record-form label:first-child { grid-column: span 2; }
-:root { --ink: #111214; --muted: #8a8a88; --line: #303133; --paper: #e8e7e3; --orange: #ff4e24; --yellow: #ffcf45; }
+:root { --ink: #09090b; --muted: #27272a; --line: #3f3f46; --paper: #fafafa; --orange: #dfe104; --yellow: #dfe104; }
 .app-shell { max-width: 1440px; margin: 0 auto; padding: 0 5.6vw; overflow: hidden; background: radial-gradient(circle at 89% 21%, #292b2d 0, #111214 30%); }
 .topbar { height: 86px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 48px; }
 .brand, .nav-link, .admin-link { border: 0; background: transparent; color: inherit; }.brand { display: flex; gap: 11px; align-items: center; font: 600 13px 'DM Mono', monospace; letter-spacing: .06em; white-space: nowrap; }.brand-mark { display: grid; place-items: center; width: 34px; height: 27px; background: var(--orange); color: white; font: 800 17px 'Barlow Condensed', sans-serif; transform: skew(-13deg); }.main-nav { display: flex; gap: 26px; align-self: stretch; margin-left: auto; }.nav-link { color: #9b9b99; padding: 4px 0; position: relative; font: 500 12px 'DM Mono', monospace; }.nav-link.active, .nav-link:hover { color: white; }.nav-link.active:after { content: ''; height: 2px; background: var(--orange); position: absolute; bottom: -1px; left: 0; right: 0; }.admin-link { font: 500 11px 'DM Mono', monospace; letter-spacing: .06em; color: var(--paper); border-left: 1px solid var(--line); padding-left: 29px; }.admin-link span { color: var(--orange); font-size: 17px; margin-left: 7px; }
@@ -88,3 +88,22 @@ h1 { font-size: clamp(48px, 6.4vw, 92px); }
 .crud-row-body strong { font-size: 16px; }
 .table-row { font-size: 11px; }
 @media (max-width: 800px) { h1, .archive-page h1, .detail-page h1 { font-size: 54px; }.next-race-panel h2 { font-size: 48px; }.driver-highlight h3 { font-size: 44px; } }
+.table-team-logo { width: 22px; height: 22px; object-fit: contain; flex: 0 0 22px; }
+.race-detail-page h1 { font-size: clamp(44px, 5.5vw, 76px); }
+@media (max-width: 800px) { .race-detail-page h1 { font-size: 36px; line-height: .95; } }
+.app-shell { background: var(--ink); }
+.kinetic-marquee { width: calc(100% + 11.2vw); margin-left: -5.6vw; overflow: hidden; border-top: 2px solid var(--line); border-bottom: 2px solid var(--line); white-space: nowrap; }
+.marquee-track { display: inline-flex; align-items: center; min-width: max-content; gap: 28px; padding: 16px 24px; animation: marquee-scroll 24s linear infinite; font: 700 clamp(20px, 3vw, 42px)/1 'Formula1', sans-serif; text-transform: uppercase; }
+.marquee-track b { color: var(--orange); font: 700 1.2em/1 'Formula1', sans-serif; }
+.global-marquee { background: var(--orange); color: #000; }
+.global-marquee .marquee-track b { color: #000; }
+.stats-marquee { margin-top: 72px; background: var(--muted); color: var(--paper); }
+.stats-marquee .marquee-track b { color: var(--orange); }
+.next-race-panel { background: var(--orange); color: #000; }
+.next-race-panel .panel-top, .next-race-panel .race-kicker, .next-race-panel .race-meta { color: rgba(0, 0, 0, .72); }
+.next-race-panel:after { color: rgba(0, 0, 0, .2); }
+.outline-button:hover, .segmented button:hover, .table-row:hover, .calendar-item:hover, .constructor-row:hover { background: var(--orange); color: #000; }
+.outline-button:hover span, .text-button:hover { color: #000; }
+.outline-button, .danger-button, .icon-button, .search-box, .admin-form input, .import-controls input, .import-controls select, .crud-toolbar select, .crud-search input, .record-form input, .record-form select { border-radius: 0; }
+@keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .marquee-track { animation-play-state: paused; } *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }

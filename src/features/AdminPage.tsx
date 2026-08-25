@@ -224,7 +224,7 @@ export default function AdminPage() {
     setEditing(row)
     setDraft(JSON.stringify(row, null, 2))
     setImageFile(null)
-    setImagePreview(String(row.headshot_url ?? ''))
+    setImagePreview(String(table === 'drivers' ? row.headshot_url ?? '' : row.logo_url ?? ''))
     setMessage('')
   }
 
@@ -248,6 +248,19 @@ export default function AdminPage() {
     return supabase.storage.from('driver-images').getPublicUrl(path).data.publicUrl
   }
 
+  async function uploadTeamLogo(teamId: string, file: File) {
+    if (!supabase) throw new Error('Supabase is disabled. Set VITE_USE_SUPABASE=true.')
+    const extension = file.name.split('.').pop()?.toLowerCase() || 'png'
+    const path = `${teamId}/${crypto.randomUUID()}.${extension}`
+    const { error } = await supabase.storage.from('team-logos').upload(path, file, {
+      cacheControl: '3600',
+      contentType: file.type,
+      upsert: false,
+    })
+    if (error) throw error
+    return supabase.storage.from('team-logos').getPublicUrl(path).data.publicUrl
+  }
+
   function updateDraft(field: string, value: string) {
     setDraft((current) => JSON.stringify({ ...JSON.parse(current), [field]: value === '' ? null : value }, null, 2))
   }
@@ -263,6 +276,10 @@ export default function AdminPage() {
       if (table === 'drivers' && imageFile) {
         const imageUrl = await uploadDriverImage(String(saved.id), imageFile)
         await updateAdminRow('drivers', String(saved.id), { headshot_url: imageUrl })
+      }
+      if (table === 'teams' && imageFile) {
+        const logoUrl = await uploadTeamLogo(String(saved.id), imageFile)
+        await updateAdminRow('teams', String(saved.id), { logo_url: logoUrl })
       }
       setEditing(null)
       setImageFile(null)
@@ -374,13 +391,13 @@ export default function AdminPage() {
                   </div>
                   <button className="text-button" onClick={() => setEditing(null)}>Cancel</button>
                 </div>
-                {table === 'drivers' && (
+                {(table === 'drivers' || table === 'teams') && (
                   <div className="driver-image-upload">
                     <div className="driver-image-preview">
-                      {imagePreview ? <img src={imagePreview} alt="Driver preview" /> : <span>NO IMAGE</span>}
+                      {imagePreview ? <img src={imagePreview} alt={table === 'drivers' ? 'Driver preview' : 'Team logo preview'} /> : <span>NO IMAGE</span>}
                     </div>
                     <label className="file-input-label">
-                      Driver image
+                      {table === 'drivers' ? 'Driver image' : 'Team logo'}
                       <input
                         type="file"
                         accept="image/jpeg,image/png,image/webp"
@@ -396,7 +413,7 @@ export default function AdminPage() {
                         }}
                       />
                     </label>
-                    <small>JPG, PNG or WEBP, up to 5 MB. Saved uploads replace the current image.</small>
+                    <small>JPG, PNG or WEBP, up to 5 MB. Saved uploads replace the current file.</small>
                   </div>
                 )}
                 <div className="record-form">
@@ -453,7 +470,7 @@ export default function AdminPage() {
 
                     return (
                       <div className="crud-row" key={String(row.id)}>
-                        {table === 'drivers' && row.headshot_url ? <img className="crud-row-avatar" src={String(row.headshot_url)} alt="" /> : <code>{String(row.id)}</code>}
+                        {table === 'drivers' && row.headshot_url ? <img className="crud-row-avatar" src={String(row.headshot_url)} alt="" /> : table === 'teams' && row.logo_url ? <img className="crud-row-avatar" src={String(row.logo_url)} alt="" /> : <code>{String(row.id)}</code>}
                         <div className="crud-row-body">
                           <strong>{summary.title}</strong>
                           <div className="crud-row-fields">
