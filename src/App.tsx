@@ -314,6 +314,7 @@ function ArchiveList({
     year?: number;
     date?: string;
     country?: string;
+    season_id?: string | number;
     given_name?: string;
     family_name?: string;
     nationality?: string;
@@ -331,8 +332,31 @@ function ArchiveList({
       : kind === "circuits"
         ? `${row.location ?? ""} ${row.country ?? ""}`.trim()
         : (row.date ?? row.country ?? "");
+  const raceGroups = kind === "races"
+    ? visible.reduce<Map<string, typeof visible>>((groups, row) => {
+        const year = String(
+          row.year ?? row.season_id ?? row.date?.slice(0, 4) ?? "Unknown year",
+        );
+        const group = groups.get(year) ?? [];
+        group.push(row);
+        groups.set(year, group);
+        return groups;
+      }, new Map())
+    : undefined;
+  const renderRow = (row: (typeof visible)[number], index: number) => (
+    <button
+      className="archive-row"
+      key={row.id}
+      onClick={() => navigate(`/${kind}/${row.id}`)}
+    >
+      <span>{String(index + 1).padStart(2, "0")}</span>
+      <strong>{titleOf(row)}</strong>
+      <small>{detailOf(row)}</small>
+      <b>â†’</b>
+    </button>
+  );
   return (
-    <section className="archive-page">
+    <section className={`archive-page ${kind}-archive-page`}>
       <p className="eyebrow">THE DATABASE / {kind.toUpperCase()}</p>
       <div className="archive-heading">
         <div>
@@ -354,7 +378,12 @@ function ArchiveList({
         <EmptyState entity={kind} />
       ) : (
         <div className="archive-list">
-          {visible.map((row, index) => (
+          {raceGroups ? Array.from(raceGroups.entries()).map(([year, group]) => (
+            <section className="race-year-group" key={year}>
+              <h2>{year}</h2>
+              {group.map(renderRow)}
+            </section>
+          )) : visible.map((row, index) => (
             <button
               className="archive-row"
               key={row.id}

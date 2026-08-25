@@ -106,6 +106,22 @@ h1 { font-size: clamp(48px, 6.4vw, 92px); }
 .podium-secondary-image img { width: 100%; height: 100%; object-fit: contain; object-position: right bottom; }
 @media (max-width: 800px) { .race-detail-page h1 { font-size: 36px; line-height: .95; } }
 @media (max-width: 800px) { .podium-highlight { grid-template-columns: 45% 55%; gap: 0; margin: 42px 0 58px; }.podium-highlight-image { min-height: 250px; max-height: 290px; }.podium-highlight-copy { gap: 10px; padding: 18px 14px; }.podium-highlight-copy h2 { font-size: 22px; line-height: 1; white-space: nowrap; overflow: visible; }.podium-highlight-copy .eyebrow { font-size: 8px; line-height: 1.35; }.podium-team { gap: 7px; font-size: 10px; overflow-wrap: anywhere; }.podium-team img { width: 24px; height: 24px; flex: 0 0 24px; }.podium-secondary-row { gap: 8px; margin: -26px 0 58px; }.podium-secondary-card { grid-template-columns: 1fr 42%; min-height: 150px; }.podium-secondary-copy { padding: 12px 10px; gap: 7px; }.podium-secondary-copy h2 { font-size: 16px; }.podium-secondary-copy .podium-team { font-size: 8px; }.podium-secondary-copy .podium-team img { width: 20px; height: 20px; flex-basis: 20px; } }
+@media (max-width: 800px) { .podium-highlight-image { min-height: 190px; max-height: 220px; }.podium-highlight-copy { padding: 12px 10px; gap: 7px; }.podium-highlight-copy h2 { font-size: 18px; }.podium-highlight-copy .eyebrow { font-size: 7px; }.podium-team { font-size: 8px; }.podium-team img { width: 20px; height: 20px; flex-basis: 20px; }.podium-secondary-card { min-height: 112px; }.podium-secondary-copy { padding: 9px 8px; gap: 5px; }.podium-secondary-copy h2 { font-size: 12px; }.podium-secondary-copy .eyebrow { font-size: 7px; }.podium-secondary-copy .podium-team { font-size: 7px; }.podium-secondary-copy .podium-team img { width: 17px; height: 17px; flex-basis: 17px; }.podium-secondary-image { font-size: 8px; } }
+.teams-archive-page h1 { font-size: clamp(30px, 3.8vw, 52px); }
+.teams-archive-page .archive-row strong { font-size: 13px; }
+.teams-archive-page .archive-row { padding-top: 17px; padding-bottom: 17px; }
+.entity-team-page h1 { font-size: clamp(30px, 3.8vw, 52px); }
+.entity-team-page .section-heading h2 { font-size: 19px; }
+.entity-team-page .table-row, .entity-team-page .roster-driver { font-size: 9px; }
+@media (max-width: 800px) { .teams-archive-page h1, .entity-team-page h1 { font-size: 28px; }.teams-archive-page .archive-row strong { font-size: 12px; }.entity-team-page .section-heading h2 { font-size: 18px; } }
+.drivers-archive-page h1 { font-size: clamp(30px, 3.8vw, 52px); }
+.drivers-archive-page .archive-row strong { font-size: 13px; }
+.entity-driver-page h1 { font-size: clamp(30px, 3.8vw, 52px); }
+.entity-driver-page .section-heading h2 { font-size: 19px; }
+.entity-driver-page .table-row, .entity-driver-page .roster-driver { font-size: 9px; }
+.entity-driver-page .driver-cell { font-size: 11px; }
+.entity-driver-page .team-cell { font-size: 9px; }
+@media (max-width: 800px) { .drivers-archive-page h1, .entity-driver-page h1 { font-size: 28px; }.drivers-archive-page .archive-row strong { font-size: 12px; }.entity-driver-page .section-heading h2 { font-size: 18px; } }
 .app-shell { background: var(--ink); }
 .kinetic-marquee { width: calc(100% + 11.2vw); margin-left: -5.6vw; overflow: hidden; border-top: 2px solid var(--line); border-bottom: 2px solid var(--line); white-space: nowrap; }
 .marquee-track { display: inline-flex; align-items: center; min-width: max-content; gap: 28px; padding: 16px 24px; animation: marquee-scroll 24s linear infinite; font: 700 clamp(20px, 3vw, 42px)/1 'Formula1', sans-serif; text-transform: uppercase; }
@@ -122,9 +138,51 @@ h1 { font-size: clamp(48px, 6.4vw, 92px); }
 .outline-button, .danger-button, .icon-button, .search-box, .admin-form input, .import-controls input, .import-controls select, .crud-toolbar select, .crud-search input, .record-form input, .record-form select { border-radius: 0; }
 @keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .marquee-track { animation-play-state: paused; } *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
-.race-detail-page h1 { font-size: clamp(40px, 5vw, 68px); }
+.race-detail-page h1 { font-size: clamp(34px, 4.4vw, 60px); }
+.race-detail-page .detail-subtitle { font-size: 12px; }
 .race-results .table-head { font-size: 8px; }
 .race-results .table-row { font-size: 10px; }
 .race-results .driver-cell { font-size: 12px; }
 .table-team-logo { width: 26px; height: 26px; padding: 2px; object-fit: contain; flex: 0 0 26px; }
-@media (max-width: 800px) { .race-detail-page h1 { font-size: 32px; }.race-results .driver-cell { font-size: 11px; }.race-results .table-row { padding-top: 13px; padding-bottom: 13px; } }
+@media (max-width: 800px) { .race-detail-page h1 { font-size: 28px; }.race-detail-page .detail-subtitle { font-size: 11px; }.race-results .driver-cell { font-size: 11px; }.race-results .table-row { padding-top: 13px; padding-bottom: 13px; } }
+
+/* Keep primary navigation visible as a tab set on narrow screens. */
+.main-nav { gap: 0; border-bottom: 1px solid var(--line); }
+.nav-link { padding: 10px 14px; border: 1px solid transparent; border-bottom: 0; }
+.nav-link.active { color: var(--paper); background: var(--muted); border-color: var(--line); }
+.nav-link.active:after { display: none; }
+
+@media (max-width: 800px) {
+  .main-nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    border: 1px solid var(--line);
+  }
+  .nav-link {
+    min-width: 0;
+    padding: 9px 5px;
+    border: 0;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    text-align: center;
+    white-space: nowrap;
+  }
+  .nav-link:nth-child(3n) { border-right: 0; }
+  .nav-link:nth-last-child(-n + 3) { border-bottom: 0; }
+  .nav-link.active { border-color: var(--line); }
+}
+
+.races-archive-page h1 { font-size: clamp(42px, 5.2vw, 72px); }
+.races-archive-page .archive-row { padding-top: 16px; padding-bottom: 16px; }
+.races-archive-page .archive-row strong { font-size: 18px; }
+.race-year-group + .race-year-group { margin-top: 28px; }
+.race-year-group h2 { padding: 18px 14px 10px; color: var(--orange); font: 500 14px 'DM Mono'; letter-spacing: .08em; border-bottom: 1px solid var(--line); }
+@media (max-width: 800px) {
+  .races-archive-page h1 { font-size: 34px; }
+  .races-archive-page .archive-row strong { font-size: 15px; }
+  .races-archive-page .archive-row { padding-top: 14px; padding-bottom: 14px; }
+  .race-year-group h2 { font-size: 12px; padding: 14px 8px 8px; }
+}

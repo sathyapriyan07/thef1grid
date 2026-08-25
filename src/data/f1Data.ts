@@ -13,6 +13,7 @@ export type Driver = {
 export type Race = {
   id: string;
   season_id?: string;
+  circuit_id?: string;
   round: string | number;
   date?: string;
   name: string;

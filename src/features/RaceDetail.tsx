@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import {
   getDrivers,
   getDriverPodiums,
+  getCircuits,
   getLaps,
   getPitstops,
   getQualifyingResults,
@@ -99,6 +100,7 @@ export default function RaceDetail() {
   const races = useQuery({ queryKey: ["races"], queryFn: getRaces });
   const drivers = useQuery({ queryKey: ["drivers"], queryFn: getDrivers });
   const teams = useQuery({ queryKey: ["teams"], queryFn: getTeams });
+  const circuits = useQuery({ queryKey: ["circuits"], queryFn: getCircuits });
   const results = useQuery({ queryKey: ["results"], queryFn: getResults });
   const qualifying = useQuery({
     queryKey: ["qualifying_results"],
@@ -112,6 +114,7 @@ export default function RaceDetail() {
   const laps = useQuery({ queryKey: ["laps"], queryFn: getLaps });
   const podiums = useQuery({ queryKey: ["driver_podiums"], queryFn: getDriverPodiums });
   const race = races.data?.find((row) => row.id === id);
+  const circuit = race?.circuit_id ? circuits.data?.find((row) => row.id === race.circuit_id) : undefined;
   const raceResults = (results.data ?? []).filter((row) => row.race_id === id);
   const winner = raceResults.find((row) => row.position === 1) ?? raceResults[0];
   const winnerDriver = winner ? drivers.data?.find((row) => row.id === winner.driver_id) : undefined;
@@ -135,7 +138,7 @@ export default function RaceDetail() {
   const driver = (row: Row) =>
     driverNames.get(row.driver_id) ?? "Unknown driver";
   const team = (row: Row) => teamNames.get(row.team_id ?? "") ?? "Unknown team";
-  if (races.isLoading || drivers.isLoading || teams.isLoading || podiums.isLoading)
+  if (races.isLoading || drivers.isLoading || teams.isLoading || circuits.isLoading || podiums.isLoading)
     return (
       <section className="empty-state">
         <strong>Loading imported race data...</strong>
@@ -155,11 +158,9 @@ export default function RaceDetail() {
       <Link className="back-link" to="/races">
         ← Back to archive
       </Link>
-      <p className="eyebrow">DATABASE RECORD / RACE</p>
       <h1>{race.name}</h1>
       <p className="detail-subtitle">
-        {race.date ?? "Date pending"} / {race.circuit ?? "Circuit pending"} /{" "}
-        {race.country ?? ""}
+        {race.date ?? "Date pending"} / {circuit?.name ?? race.circuit ?? "Circuit pending"} / {circuit?.country ?? race.country ?? ""}
       </p>
       {winner && winnerDriver && (
         <section className="podium-highlight">
