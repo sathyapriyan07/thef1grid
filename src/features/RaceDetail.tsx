@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -46,12 +46,14 @@ function Table({
   columns,
   empty,
   driverLogos,
+  beforeTable,
 }: {
   title: string;
   rows: Row[];
   columns: Array<[string, (row: Row, index: number) => ReactNode]>;
   empty: string;
   driverLogos?: Map<string, string>;
+  beforeTable?: ReactNode;
 }) {
   return (
     <section className="race-detail-section">
@@ -62,6 +64,7 @@ function Table({
         </div>
         <span className="detail-count">{rows.length} RECORDS</span>
       </div>
+      {beforeTable}
       {rows.length === 0 ? (
         <p className="detail-empty">{empty}</p>
       ) : (
@@ -97,6 +100,7 @@ function Table({
 }
 export default function RaceDetail() {
   const { id = "" } = useParams();
+  const [qualifyingSession, setQualifyingSession] = useState<"Q1" | "Q2" | "Q3">("Q1");
   const races = useQuery({ queryKey: ["races"], queryFn: getRaces });
   const drivers = useQuery({ queryKey: ["drivers"], queryFn: getDrivers });
   const teams = useQuery({ queryKey: ["teams"], queryFn: getTeams });
@@ -135,6 +139,7 @@ export default function RaceDetail() {
   );
   const filter = (rows: Row[] | undefined) =>
     (rows ?? []).filter((row) => row.race_id === id);
+  const qualifyingRows = filter(qualifying.data);
   const driver = (row: Row) =>
     driverNames.get(row.driver_id) ?? "Unknown driver";
   const team = (row: Row) => teamNames.get(row.team_id ?? "") ?? "Unknown team";
@@ -215,17 +220,29 @@ export default function RaceDetail() {
       />
       <Table
         title="Qualifying"
-        rows={filter(qualifying.data)}
+        rows={qualifyingRows}
         columns={[
           ["POS", (row, index) => row.position ?? index + 1],
           ["DRIVER", driver],
-          ["TEAM", team],
-          ["Q1", (row) => row.q1 ?? "-"],
-          ["Q2", (row) => row.q2 ?? "-"],
-          ["Q3", (row) => row.q3 ?? "-"],
+          [qualifyingSession, (row) => row[qualifyingSession.toLowerCase() as "q1" | "q2" | "q3"] ?? "-"],
         ]}
         empty="No qualifying records imported for this race."
         driverLogos={teamLogos}
+        beforeTable={
+          <div className="qualifying-tabs" role="tablist" aria-label="Qualifying sessions">
+            {(["Q1", "Q2", "Q3"] as const).map((session) => (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={qualifyingSession === session}
+                className={qualifyingSession === session ? "active" : ""}
+                onClick={() => setQualifyingSession(session)}
+              >
+                {session}
+              </button>
+            ))}
+          </div>
+        }
       />
       <Table
         title="Sprint"

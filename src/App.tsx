@@ -335,7 +335,7 @@ function ArchiveList({
   const raceGroups = kind === "races"
     ? visible.reduce<Map<string, typeof visible>>((groups, row) => {
         const year = String(
-          row.year ?? row.season_id ?? row.date?.slice(0, 4) ?? "Unknown year",
+          row.date?.slice(0, 4) ?? row.year ?? row.season_id ?? "Unknown year",
         );
         const group = groups.get(year) ?? [];
         group.push(row);
@@ -655,6 +655,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin/import" element={<AdminPage importOnly />} />
+          <Route path="/admin/:table" element={<AdminPage />} />
           <Route path="/admin-legacy" element={<Admin />} />
           {(["races", "drivers", "teams", "circuits", "seasons"] as const).map(
             (kind) => (

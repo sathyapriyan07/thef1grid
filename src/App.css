@@ -38,6 +38,8 @@ footer { display: flex; justify-content: space-between; border-top: 1px solid va
 .file-input-label { display: grid; gap: 8px; color: #858684; font: 10px 'DM Mono'; text-transform: uppercase; }
 .file-input-label input { color: #c8c9c5; font: 10px 'DM Mono'; }
 .driver-image-upload small { grid-column: 2; color: #777875; font: 10px/1.5 'DM Mono'; }
+.driver-podium-upload { display: grid; grid-template-columns: 88px minmax(0, 260px); gap: 8px 16px; align-items: center; margin: 24px 0 4px; padding-top: 18px; border-top: 1px solid var(--line); }
+.driver-podium-upload small { grid-column: 2; color: #777875; font: 10px/1.5 'DM Mono'; }
 .crud-row-avatar { width: 36px; height: 44px; object-fit: cover; border: 1px solid #494a48; }
 .race-detail-section { margin-top: 72px; }.race-detail-section .section-heading { margin-bottom: 20px; }.detail-count { color: #777875; font: 10px 'DM Mono'; }.detail-empty { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); color: #777875; padding: 22px 14px; font: 12px 'DM Mono'; }.race-detail-section .table-head, .race-detail-section .table-row { grid-template-columns: 60px 1.5fr 1.2fr 80px 70px 70px; }
 .team-race-row { grid-template-columns: 1.2fr 1.2fr 1.2fr 70px !important; }.race-detail-section:has(.team-race-row) .table-head { grid-template-columns: 1.2fr 1.2fr 1.2fr 70px !important; }.team-race-row small { display: block; color: #777875; font: 9px 'DM Mono'; margin-top: 4px; }
@@ -58,6 +60,24 @@ h1, h2, h3, .brand-mark, .next-race-panel h2, .driver-number, .driver-highlight 
 @media (max-width: 800px) { .race-detail-section:has(.teammate-row) .table-head, .race-detail-section:has(.teammate-row) .table-row { grid-template-columns: minmax(0, 1fr) minmax(82px, .8fr) 82px; gap: 8px; }.race-detail-section:has(.teammate-row) .table-row { padding: 15px 8px; }.race-detail-section:has(.teammate-row) .table-row > span { min-width: 0; overflow-wrap: anywhere; }.race-detail-section:has(.teammate-row) .team-cell { overflow-wrap: anywhere; } }
 @media (min-width: 801px) { .detail-page > .race-detail-section:last-child:has(.team-race-row) .table-head, .detail-page > .race-detail-section:last-child:has(.team-race-row) .table-row { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr) 70px 70px; } }
 @media (max-width: 800px) { .detail-page > .race-detail-section:last-child:has(.team-race-row) .table-head, .detail-page > .race-detail-section:last-child:has(.team-race-row) .table-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) 44px; gap: 8px; }.detail-page > .race-detail-section:last-child:has(.team-race-row) .table-row { padding: 18px 8px; align-items: start; }.detail-page > .race-detail-section:last-child:has(.team-race-row) .table-row > span { min-width: 0; overflow-wrap: anywhere; }.detail-page > .race-detail-section:last-child:has(.team-race-row) .driver-cell { font-size: 14px; line-height: 1.1; } }
+.crud-row-actions { display: flex; align-items: start; gap: 10px; }
+@media (max-width: 800px) {
+  .crud-row { grid-template-columns: 48px minmax(0, 1fr); gap: 10px; }
+  .crud-row-body { min-width: 0; }
+  .crud-row-body strong { display: block; min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
+  .crud-row-actions { grid-column: 2; display: flex; flex-wrap: wrap; gap: 8px; }
+  .crud-row-actions .text-button, .crud-row-actions .danger-button { margin-top: 0; }
+  .crud-row code { overflow-wrap: anywhere; word-break: break-word; }
+}
+.qualifying .table-head, .qualifying .table-row { grid-template-columns: 42px minmax(0, 1.3fr) minmax(70px, .9fr) 62px 62px 62px; }
+@media (max-width: 800px) {
+  .qualifying .table-head, .qualifying .table-row { grid-template-columns: 28px minmax(0, 1fr) 62px 46px 46px 46px; gap: 5px; }
+  .qualifying .table-row { padding-left: 6px; padding-right: 6px; }
+  .qualifying .driver-cell { font-size: 10px; line-height: 1.05; }
+  .qualifying .team-cell, .qualifying .table-row > span { min-width: 0; overflow-wrap: anywhere; }
+  .qualifying .table-head span:nth-child(5), .qualifying .table-row span:nth-child(5),
+  .qualifying .table-head span:nth-child(6), .qualifying .table-row span:nth-child(6) { display: block; }
+}
  .detail-page h1 { max-width: 100%; overflow-wrap: anywhere; }
 @media (max-width: 800px) { .detail-page h1 { font-size: 42px; line-height: .9; max-width: 100%; } }
 .driver-cell { font-size: 14px; }
@@ -177,15 +197,56 @@ h1 { font-size: clamp(48px, 6.4vw, 92px); }
 
 .races-archive-page h1 { font-size: clamp(42px, 5.2vw, 72px); }
 .races-archive-page .archive-row { padding-top: 16px; padding-bottom: 16px; }
-.races-archive-page .archive-row strong { font-size: 18px; }
+.races-archive-page .archive-row strong { font-size: 15px; }
 .race-year-group + .race-year-group { margin-top: 28px; }
 .race-year-group h2 { padding: 18px 14px 10px; color: var(--orange); font: 500 14px 'DM Mono'; letter-spacing: .08em; border-bottom: 1px solid var(--line); }
 @media (max-width: 800px) {
   .races-archive-page h1 { font-size: 34px; }
-  .races-archive-page .archive-row strong { font-size: 15px; }
+  .races-archive-page .archive-row strong { font-size: 13px; }
   .races-archive-page .archive-row { padding-top: 14px; padding-bottom: 14px; }
   .race-year-group h2 { font-size: 12px; padding: 14px 8px 8px; }
 }
 
 .podium-search-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: min(700px, 100%); }
 @media (max-width: 800px) { .podium-search-fields { grid-template-columns: 1fr; width: 100%; } }
+.admin-section-nav { display: flex; flex-wrap: wrap; gap: 6px; margin: 34px 0 28px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.admin-section-nav a { padding: 8px 10px; border: 1px solid var(--line); color: #858684; font: 10px 'DM Mono'; text-decoration: none; text-transform: uppercase; }
+.admin-section-nav a:hover, .admin-section-nav a.active { color: var(--ink); background: var(--orange); border-color: var(--orange); }
+@media (max-width: 800px) { .admin-section-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }.admin-section-nav a { text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
+
+@media (max-width: 800px) {
+  .race-data-table.qualifying .table-head,
+  .race-data-table.qualifying .table-row { grid-template-columns: 28px minmax(0, 1fr) 62px 46px 46px 46px !important; gap: 5px; }
+  .race-data-table.qualifying .table-head span:nth-child(5),
+  .race-data-table.qualifying .table-row span:nth-child(5),
+  .race-data-table.qualifying .table-head span:nth-child(6),
+  .race-data-table.qualifying .table-row span:nth-child(6) { display: block !important; }
+}
+.qualifying-tabs { display: flex; gap: 4px; margin: 0 0 14px; border-bottom: 1px solid var(--line); }
+.qualifying-tabs button { border: 1px solid transparent; border-bottom: 0; background: transparent; color: #777875; padding: 9px 16px; font: 10px 'DM Mono'; }
+.qualifying-tabs button:hover, .qualifying-tabs button.active { color: var(--ink); background: var(--orange); border-color: var(--orange); }
+.race-data-table.qualifying .table-head, .race-data-table.qualifying .table-row { grid-template-columns: 48px minmax(0, 1fr) 90px !important; }
+@media (max-width: 800px) {
+  .qualifying-tabs button { flex: 1; padding: 8px 10px; }
+  .race-data-table.qualifying .table-head, .race-data-table.qualifying .table-row { grid-template-columns: 28px minmax(0, 1fr) 70px !important; gap: 6px; }
+  .race-data-table.qualifying .driver-cell { font-size: 11px; line-height: 1.05; }
+}
+.teammate-card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.teammate-card { min-height: 150px; display: grid; grid-template-columns: minmax(0, 1fr) 42%; border: 1px solid var(--line); background: var(--muted); color: inherit; text-decoration: none; overflow: hidden; transition: border-color .15s ease, background .15s ease; }
+.teammate-card:hover { border-color: var(--orange); background: #2a2b2d; }
+.teammate-card-copy { display: flex; flex-direction: column; justify-content: space-between; gap: 12px; padding: 20px; min-width: 0; }
+.teammate-card h3 { color: var(--paper); font-size: 18px; line-height: .95; overflow-wrap: anywhere; }
+.teammate-card .podium-team { margin-top: auto; }
+.teammate-card-image { min-height: 150px; display: flex; align-items: end; justify-content: center; overflow: hidden; color: #a1a1aa; font: 9px 'DM Mono'; }
+.teammate-card-image img { width: 100%; height: 100%; object-fit: contain; object-position: center bottom; align-self: end; }
+.teammate-period { color: #a1a1aa; font: 10px 'DM Mono'; }
+@media (max-width: 800px) {
+  .teammate-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .teammate-card { min-height: 125px; }
+  .teammate-card-copy { padding: 12px 10px; gap: 10px; }
+  .teammate-card-image { min-height: 125px; }
+  .teammate-card h3 { font-size: 13px; }
+  .teammate-card .eyebrow { font-size: 7px; }
+  .teammate-card .podium-team { gap: 6px; font-size: 8px; }
+  .teammate-card .podium-team img { width: 20px; height: 20px; flex-basis: 20px; }
+}

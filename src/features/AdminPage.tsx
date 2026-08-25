@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { Link, useParams } from 'react-router-dom'
 import { importEntity, writeImportLog } from '../lib/f1Importer'
 import {
   adminTables,
@@ -103,7 +104,10 @@ function visibleEntries(row: Record<string, unknown>) {
   return Object.entries(row).filter(([key]) => !systemFields.has(key))
 }
 
-export default function AdminPage() {
+export default function AdminPage({ importOnly = false }: { importOnly?: boolean }) {
+  const params = useParams<{ table?: string }>()
+  const requestedTable = adminTables.includes(params.table as AdminTable) ? params.table as AdminTable : undefined
+  const showImport = importOnly || !requestedTable
   const signedIn = useSupabaseSession()
   const queryClient = useQueryClient()
   const [email, setEmail] = useState('')
@@ -111,7 +115,7 @@ export default function AdminPage() {
   const [season, setSeason] = useState('2025')
   const [round, setRound] = useState('')
   const [entity, setEntity] = useState<Parameters<typeof importEntity>[0]>('races')
-  const [table, setTable] = useState<AdminTable>('races')
+  const [table, setTable] = useState<AdminTable>(requestedTable ?? 'races')
   const [editing, setEditing] = useState<Record<string, unknown> | null>(null)
   const [draft, setDraft] = useState('{}')
   const [busy, setBusy] = useState(false)
@@ -119,8 +123,22 @@ export default function AdminPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [podiumDriverId, setPodiumDriverId] = useState('')
   const [podiumSeasonId, setPodiumSeasonId] = useState('')
+  const [relationSearch, setRelationSearch] = useState<Record<string, string>>({})
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState('')
+  const [podiumImageFile, setPodiumImageFile] = useState<File | null>(null)
+  const [podiumImagePreview, setPodiumImagePreview] = useState('')
+  const [driverPodiumSeasonId, setDriverPodiumSeasonId] = useState('')
+
+  useEffect(() => {
+    if (!requestedTable) return
+    setTable(requestedTable)
+    setEditing(null)
+    setSearchTerm('')
+    setPodiumDriverId('')
+    setPodiumSeasonId('')
+    setRelationSearch({})
+  }, [requestedTable])
 
   useEffect(() => {
     if (!imageFile) return
@@ -129,7 +147,15 @@ export default function AdminPage() {
     return () => URL.revokeObjectURL(url)
   }, [imageFile])
 
+  useEffect(() => {
+    if (!podiumImageFile) return
+    const url = URL.createObjectURL(podiumImageFile)
+    setPodiumImagePreview(url)
+    return () => URL.revokeObjectURL(url)
+  }, [podiumImageFile])
+
   const rows = useQuery({ queryKey: ['admin', table], queryFn: () => getAdminRows(table), enabled: signedIn, retry: false })
+  const podiumRows = useQuery({ queryKey: ['admin', 'driver_podiums'], queryFn: () => getAdminRows('driver_podiums'), enabled: signedIn, retry: false })
   const relations = useQuery({
     queryKey: ['admin-relations'],
     queryFn: async () => Object.fromEntries(await Promise.all(relationSources.map(async (name) => [name, await getAdminRows(name)]))),
@@ -153,6 +179,15 @@ export default function AdminPage() {
     const source = relationFields[field]
     return source ? (relations.data?.[source] ?? []) : []
   }
+
+  const selectedDriverPodium = editing && table === 'drivers' && driverPodiumSeasonId
+    ? (podiumRows.data ?? []).find((row) => String(row.driver_id) === String(editing.id) && String(row.season_id) === driverPodiumSeasonId)
+    : undefined
+
+  useEffect(() => {
+    if (table !== 'drivers' || !editing || podiumImageFile) return
+    setPodiumImagePreview(String(selectedDriverPodium?.image_url ?? ''))
+  }, [table, editing, driverPodiumSeasonId, selectedDriverPodium, podiumImageFile])
 
   const displayRow = (row: Record<string, unknown>) =>
     Object.fromEntries(
@@ -233,16 +268,24 @@ export default function AdminPage() {
   function editRow(row: Record<string, unknown>) {
     setEditing(row)
     setDraft(JSON.stringify(row, null, 2))
+    setRelationSearch({})
     setImageFile(null)
     setImagePreview(String(table === 'drivers' ? row.headshot_url ?? '' : table === 'teams' ? row.logo_url ?? '' : row.image_url ?? ''))
+    setPodiumImageFile(null)
+    setPodiumImagePreview('')
+    setDriverPodiumSeasonId(table === 'drivers' ? String((podiumRows.data ?? []).find((podium) => String(podium.driver_id) === String(row.id))?.season_id ?? '') : '')
     setMessage('')
   }
 
   function startNewRecord() {
     setEditing({})
     setDraft('{}')
+    setRelationSearch({})
     setImageFile(null)
     setImagePreview('')
+    setPodiumImageFile(null)
+    setPodiumImagePreview('')
+    setDriverPodiumSeasonId('')
   }
 
   async function uploadDriverImage(driverId: string, file: File) {
@@ -300,6 +343,12 @@ export default function AdminPage() {
         const imageUrl = await uploadDriverImage(String(saved.id), imageFile)
         await updateAdminRow('drivers', String(saved.id), { headshot_url: imageUrl })
       }
+      if (table === 'drivers' && podiumImageFile && driverPodiumSeasonId) {
+        const existing = (podiumRows.data ?? []).find((row) => String(row.driver_id) === String(saved.id) && String(row.season_id) === driverPodiumSeasonId)
+        const podium = existing ?? await createAdminRow('driver_podiums', { driver_id: saved.id, season_id: driverPodiumSeasonId })
+        const imageUrl = await uploadPodiumImage(String(podium.id), podiumImageFile)
+        await updateAdminRow('driver_podiums', String(podium.id), { image_url: imageUrl })
+      }
       if (table === 'teams' && imageFile) {
         const logoUrl = await uploadTeamLogo(String(saved.id), imageFile)
         await updateAdminRow('teams', String(saved.id), { logo_url: logoUrl })
@@ -311,8 +360,12 @@ export default function AdminPage() {
       setEditing(null)
       setImageFile(null)
       setImagePreview('')
+      setPodiumImageFile(null)
+      setPodiumImagePreview('')
+      setDriverPodiumSeasonId('')
       setMessage(id ? 'Record updated.' : 'Record created.')
       await queryClient.invalidateQueries({ queryKey: ['admin', table] })
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'driver_podiums'] })
     } catch (error) {
       setMessage(error instanceof SyntaxError ? 'Record must be valid JSON.' : error instanceof Error ? error.message : 'Could not save record.')
     } finally {
@@ -353,7 +406,15 @@ export default function AdminPage() {
         </div>
       ) : (
         <>
-          <div className="import-console">
+          <nav className="admin-section-nav" aria-label="Admin sections">
+            <Link to="/admin/import">Import</Link>
+            {adminTables.map((name) => (
+              <Link key={name} to={`/admin/${name}`} className={table === name && requestedTable ? 'active' : ''}>
+                {name.replaceAll('_', ' ')}
+              </Link>
+            ))}
+          </nav>
+          {showImport && <div className="import-console">
             <div className="import-controls">
               <label>
                 IMPORT ENTITY
@@ -374,24 +435,10 @@ export default function AdminPage() {
               </button>
             </div>
             <div className="admin-notice">Every import is upserted by external reference and recorded in import_logs.</div>
-          </div>
-          <div className="admin-crud">
+          </div>}
+          {requestedTable && !importOnly && <div className="admin-crud">
             <div className="crud-toolbar">
-              <label>
-                TABLE
-                <select
-                  value={table}
-                  onChange={(event) => {
-                    setTable(event.target.value as AdminTable)
-                    setEditing(null)
-                    setSearchTerm('')
-                    setPodiumDriverId('')
-                    setPodiumSeasonId('')
-                  }}
-                >
-                  {adminTables.map((name) => <option key={name} value={name}>{name.replaceAll('_', ' ')}</option>)}
-                </select>
-              </label>
+              <p className="eyebrow">TABLE / {table.replaceAll('_', ' ')}</p>
               <button className="outline-button" disabled={busy} onClick={startNewRecord}>
                 New record <span>+</span>
               </button>
@@ -468,6 +515,41 @@ export default function AdminPage() {
                     <small>JPG, PNG or WEBP, up to 5 MB. Saved uploads replace the current file.</small>
                   </div>
                 )}
+                {table === 'drivers' && (
+                  <div className="driver-podium-upload">
+                    <div className="driver-image-preview">
+                      {podiumImagePreview ? <img src={podiumImagePreview} alt="Driver podium preview" /> : <span>NO IMAGE</span>}
+                    </div>
+                    <label className="file-input-label">
+                      Podium season
+                      <select value={driverPodiumSeasonId} onChange={(event) => { setDriverPodiumSeasonId(event.target.value); setPodiumImageFile(null) }}>
+                        <option value="">Select season...</option>
+                        {(relations.data?.seasons ?? []).map((season: Record<string, unknown>) => (
+                          <option key={String(season.id)} value={String(season.id)}>{String(season.year ?? season.id)}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="file-input-label">
+                      Driver podium image
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        disabled={!driverPodiumSeasonId}
+                        onChange={(event) => {
+                          const file = event.target.files?.[0] ?? null
+                          if (file && file.size > 5 * 1024 * 1024) {
+                            setMessage('Choose an image smaller than 5 MB.')
+                            event.target.value = ''
+                            return
+                          }
+                          setPodiumImageFile(file)
+                          setMessage('')
+                        }}
+                      />
+                    </label>
+                    <small>Select a season, then upload its podium image. It will be saved with the driver record.</small>
+                  </div>
+                )}
                 <div className="record-form">
                   {formFields.map((field) => {
                     const value = parsedDraft?.[field]
@@ -482,8 +564,19 @@ export default function AdminPage() {
                             <input
                               type="search"
                               list={`podium-${field}-options`}
-                              value={value == null ? '' : String(value)}
-                              onChange={(event) => updateDraft(field, event.target.value)}
+                              value={relationSearch[field] ?? (() => {
+                                const selected = options.find((option: Record<string, unknown>) => String(option.id) === String(value ?? ''))
+                                return selected ? relationLabel(source, selected) : ''
+                              })()}
+                              onChange={(event) => {
+                                const typed = event.target.value
+                                const selected = options.find((option: Record<string, unknown>) =>
+                                  String(option.id).toLowerCase() === typed.toLowerCase() ||
+                                  relationLabel(source, option).toLowerCase() === typed.toLowerCase(),
+                                )
+                                setRelationSearch((current) => ({ ...current, [field]: selected ? relationLabel(source, selected) : typed }))
+                                if (selected) updateDraft(field, String(selected.id))
+                              }}
                               placeholder={`Search ${labelFor(field)}`}
                             />
                             <datalist id={`podium-${field}-options`}>
@@ -558,15 +651,17 @@ export default function AdminPage() {
                             ))}
                           </div>
                         </div>
-                        <button className="text-button" onClick={() => editRow(row)}>Edit</button>
-                        <button className="danger-button" disabled={busy} onClick={() => void removeRow(row)}>Delete</button>
+                        <div className="crud-row-actions">
+                          <button className="text-button" onClick={() => editRow(row)}>Edit</button>
+                          <button className="danger-button" disabled={busy} onClick={() => void removeRow(row)}>Delete</button>
+                        </div>
                       </div>
                     )
                   })
                 )}
               </div>
             )}
-          </div>
+          </div>}
         </>
       )}
       {message && <p className="admin-message">{message}</p>}
