@@ -33,7 +33,7 @@ const navItems = [
   ["Seasons", "/seasons"],
 ];
 const displayDriver = (row: Driver) =>
-  row.name ?? `${row.given_name ?? ""} ${row.family_name ?? ""}`.trim();
+  row.family_name ?? row.name?.trim().split(/\s+/).pop() ?? row.given_name ?? "Unnamed driver";
 function Header() {
   const location = useLocation();
   return (

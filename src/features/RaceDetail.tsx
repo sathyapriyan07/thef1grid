@@ -33,7 +33,7 @@ type Row = {
   q3?: string;
 };
 const nameOf = (row: Driver) =>
-  row.name ?? `${row.given_name ?? ""} ${row.family_name ?? ""}`.trim();
+  row.family_name ?? row.name?.trim().split(/\s+/).pop() ?? row.given_name ?? "Unknown driver";
 const timeOf = (value?: number) =>
   value == null
     ? "-"
@@ -61,7 +61,7 @@ function Table({
       {rows.length === 0 ? (
         <p className="detail-empty">{empty}</p>
       ) : (
-        <div className="standings-table">
+        <div className={`standings-table race-data-table ${title.toLowerCase().replaceAll(' ', '-')}`}>
           <div className="table-head">
             {columns.map(([label]) => (
               <span key={label}>{label}</span>

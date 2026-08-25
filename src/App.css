@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+@font-face { font-family: 'Formula1'; src: url('/Formula1-Bold_web_0.ttf') format('truetype'); font-weight: 700; font-style: normal; font-display: swap; }
 .admin-crud { margin-top: 72px; }
 .record-form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 28px 0 4px; }.record-form label { display: grid; gap: 8px; color: #858684; font: 10px 'DM Mono'; text-transform: uppercase; }.record-form input, .record-form select { width: 100%; box-sizing: border-box; border: 1px solid #494a48; background: #1b1d1e; color: white; outline: 0; padding: 12px; font: 12px 'DM Mono'; }.record-form label:first-child { grid-column: span 2; }
 :root { --ink: #111214; --muted: #8a8a88; --line: #303133; --paper: #e8e7e3; --orange: #ff4e24; --yellow: #ffcf45; }
@@ -42,9 +43,48 @@ footer { display: flex; justify-content: space-between; border-top: 1px solid va
 .team-race-row { grid-template-columns: 1.2fr 1.2fr 1.2fr 70px !important; }.race-detail-section:has(.team-race-row) .table-head { grid-template-columns: 1.2fr 1.2fr 1.2fr 70px !important; }.team-race-row small { display: block; color: #777875; font: 9px 'DM Mono'; margin-top: 4px; }
 .teammate-row small { display: block; color: #777875; font: 9px 'DM Mono'; margin-top: 4px; }
 .driver-roster { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); }.roster-driver { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--line); color: var(--paper); padding: 16px 12px; font: 600 18px 'Barlow Condensed'; text-decoration: none; text-transform: uppercase; }.roster-driver:hover { background: #1b1d1e; }.roster-driver > span:last-child { color: var(--orange); font: 16px 'DM Mono'; margin-left: auto; }.driver-roster-mark { width: 4px; height: 19px; background: var(--orange); }
+.entity-team-table .table-head, .entity-team-table .table-row { grid-template-columns: minmax(0, 1fr) 100px 100px; }
+.entity-team-table .table-row { text-decoration: none; }
 @media (max-width: 800px) { .app-shell { padding: 0 20px; }.topbar { height: auto; min-height: 76px; flex-wrap: wrap; gap: 20px; padding: 14px 0; }.main-nav { order: 3; width: 100%; overflow-x: auto; gap: 22px; height: 35px; }.intro-row { padding: 53px 0 43px; align-items: start; flex-direction: column; gap: 35px; }.hero-grid, .content-grid { grid-template-columns: 1fr; }.next-race-panel, .stat-panel { min-height: 350px; padding: 24px; }.next-race-panel h2 { font-size: 56px; }.content-grid { gap: 58px; padding: 58px 0; }.section-heading { align-items: start; flex-direction: column; gap: 18px; }.calendar-section .section-heading { flex-direction: row; align-items: end; }.table-head, .table-row { grid-template-columns: 35px 1.5fr 55px 40px; }.table-head span:nth-child(3), .table-row span:nth-child(3) { display: none; }.desktop-only { display: none; } footer { flex-direction: column; gap: 10px; } }
 @media (max-width: 800px) { .archive-page, .detail-page { padding: 58px 0 80px; }.archive-heading { display: block; padding-bottom: 35px; }.archive-search { margin-top: 30px; width: 100%; }.archive-row { grid-template-columns: 32px 1fr 22px; gap: 12px; }.archive-row small { grid-column: 2; grid-row: 2; }.archive-row b { grid-column: 3; grid-row: 1 / span 2; }.detail-page h1 { font-size: 64px; }.back-link { margin-bottom: 55px; }.detail-grid { grid-template-columns: 1fr; margin-top: 55px; } }
 @media (max-width: 800px) { .import-controls { display: grid; grid-template-columns: 1fr 90px; }.import-controls label:first-child, .import-controls label:nth-child(2) { width: auto; }.import-controls .outline-button { grid-column: 1 / -1; justify-self: start; } }
 @media (max-width: 800px) { .driver-roster { grid-template-columns: 1fr; } }
 @media (max-width: 800px) { .crud-toolbar, .crud-search-row { align-items: stretch; flex-direction: column; }.crud-toolbar label:first-child, .crud-search { width: 100%; }.crud-result-count { padding-bottom: 0; } }
 @media (max-width: 800px) { .race-detail-section:has(.team-race-row) .table-head, .race-detail-section:has(.team-race-row) .table-row { grid-template-columns: minmax(82px, 1.25fr) minmax(92px, 1.35fr) 38px 38px !important; gap: 10px; }.race-detail-section:has(.team-race-row) .table-head { padding-left: 8px; padding-right: 8px; }.race-detail-section:has(.team-race-row) .table-row { padding: 18px 8px; align-items: start; }.team-race-row > span { min-width: 0; overflow-wrap: anywhere; }.team-race-row .driver-cell { line-height: 1.05; }.team-race-row small { line-height: 1.25; } }
+@media (max-width: 800px) { .entity-team-table .table-head, .entity-team-table .table-row { grid-template-columns: minmax(0, 1fr) 64px 72px; gap: 8px; }.entity-team-table .table-row { padding: 15px 8px; }.entity-team-table .driver-cell { min-width: 0; overflow-wrap: anywhere; } }
+@media (max-width: 800px) { .detail-page > .race-detail-section:last-child .table-head, .detail-page > .race-detail-section:last-child .table-row { grid-template-columns: minmax(0, 1fr) 82px 42px; gap: 8px; }.detail-page > .race-detail-section:last-child .table-row { padding: 18px 8px; }.detail-page > .race-detail-section:last-child .table-row > span { min-width: 0; }.detail-page > .race-detail-section:last-child .team-cell { overflow-wrap: anywhere; } }
+/* The supplied Formula 1 face is a bold display font, so keep it on prominent labels and names. */
+h1, h2, h3, .brand-mark, .next-race-panel h2, .driver-number, .driver-highlight h3, .driver-cell, .calendar-name, .constructor-row strong, .archive-row strong, .roster-driver, .crud-row-body strong, .detail-grid strong { font-family: 'Formula1', sans-serif !important; }
+@media (max-width: 800px) { .race-detail-section:has(.teammate-row) .table-head, .race-detail-section:has(.teammate-row) .table-row { grid-template-columns: minmax(0, 1fr) minmax(82px, .8fr) 82px; gap: 8px; }.race-detail-section:has(.teammate-row) .table-row { padding: 15px 8px; }.race-detail-section:has(.teammate-row) .table-row > span { min-width: 0; overflow-wrap: anywhere; }.race-detail-section:has(.teammate-row) .team-cell { overflow-wrap: anywhere; } }
+@media (min-width: 801px) { .detail-page > .race-detail-section:last-child:has(.team-race-row) .table-head, .detail-page > .race-detail-section:last-child:has(.team-race-row) .table-row { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr) 70px 70px; } }
+@media (max-width: 800px) { .detail-page > .race-detail-section:last-child:has(.team-race-row) .table-head, .detail-page > .race-detail-section:last-child:has(.team-race-row) .table-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) 44px; gap: 8px; }.detail-page > .race-detail-section:last-child:has(.team-race-row) .table-row { padding: 18px 8px; align-items: start; }.detail-page > .race-detail-section:last-child:has(.team-race-row) .table-row > span { min-width: 0; overflow-wrap: anywhere; }.detail-page > .race-detail-section:last-child:has(.team-race-row) .driver-cell { font-size: 14px; line-height: 1.1; } }
+ .detail-page h1 { max-width: 100%; overflow-wrap: anywhere; }
+@media (max-width: 800px) { .detail-page h1 { font-size: 42px; line-height: .9; max-width: 100%; } }
+.driver-cell { font-size: 14px; }
+.driver-highlight h3 { font-size: 42px; }
+.roster-driver { font-size: 14px; }
+.archive-row strong { font-size: 19px; }
+.race-results .table-head, .race-results .table-row { grid-template-columns: 48px minmax(0, 1.5fr) minmax(0, 1.2fr) 60px 60px; }
+.qualifying .table-head, .qualifying .table-row { grid-template-columns: 48px minmax(0, 1.3fr) minmax(0, 1.1fr) 70px 70px 70px; }
+@media (max-width: 800px) {
+  .race-results .table-head, .race-results .table-row { grid-template-columns: 38px minmax(0, 1.5fr) minmax(0, 1fr) 48px; gap: 8px; }
+  .race-results .table-head span:nth-child(3), .race-results .table-row span:nth-child(3) { display: block; }
+  .race-results .table-head span:nth-child(5), .race-results .table-row span:nth-child(5) { display: none; }
+  .qualifying .table-head, .qualifying .table-row { grid-template-columns: 34px minmax(0, 1.2fr) minmax(0, .9fr) 52px; gap: 8px; }
+  .qualifying .table-head span:nth-child(3), .qualifying .table-row span:nth-child(3) { display: block; }
+  .qualifying .table-head span:nth-child(5), .qualifying .table-row span:nth-child(5), .qualifying .table-head span:nth-child(6), .qualifying .table-row span:nth-child(6) { display: none; }
+  .race-data-table .table-row > span { min-width: 0; overflow-wrap: anywhere; }
+}
+/* Keep the display hierarchy strong without letting the bold face consume the page. */
+h1 { font-size: clamp(48px, 6.4vw, 92px); }
+.archive-page h1, .detail-page h1 { font-size: clamp(48px, 6.8vw, 88px); }
+.section-heading h2 { font-size: 30px; }
+.next-race-panel h2 { font-size: 52px; }
+.driver-number { font-size: 78px; }
+.driver-highlight h3 { font-size: 50px; }
+.calendar-name { font-size: 14px; }
+.archive-row strong { font-size: 22px; }
+.roster-driver { font-size: 16px; }
+.crud-row-body strong { font-size: 16px; }
+.table-row { font-size: 11px; }
+@media (max-width: 800px) { h1, .archive-page h1, .detail-page h1 { font-size: 54px; }.next-race-panel h2 { font-size: 48px; }.driver-highlight h3 { font-size: 44px; } }

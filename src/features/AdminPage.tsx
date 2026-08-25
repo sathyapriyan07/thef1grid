@@ -63,7 +63,7 @@ const summaryFields: Partial<Record<AdminTable, string[]>> = {
   seasons: ['year', 'external_ref', 'url'],
   circuits: ['name', 'location', 'country'],
   teams: ['name', 'nationality', 'color_hex'],
-  drivers: ['given_name', 'family_name', 'code', 'nationality'],
+  drivers: ['family_name', 'code', 'nationality'],
   races: ['name', 'season_id', 'round', 'circuit_id', 'date', 'time'],
   sessions: ['type', 'race_id', 'date', 'time'],
   status: ['status_text'],
@@ -80,7 +80,7 @@ const summaryFields: Partial<Record<AdminTable, string[]>> = {
 
 function relationLabel(table: typeof relationSources[number], row: Record<string, unknown>) {
   if (table === 'seasons') return String(row.year ?? row.id)
-  if (table === 'drivers') return `${row.given_name ?? ''} ${row.family_name ?? ''}`.trim() || String(row.id)
+  if (table === 'drivers') return String(row.family_name ?? row.name ?? row.id)
   if (table === 'status') return String(row.status_text ?? row.id)
   if (table === 'sessions') return `${row.type ?? ''} ${row.date ?? ''}`.trim() || String(row.id)
   return String(row.name ?? row.id)

@@ -1,6 +1,6 @@
 @import url('https://api.fontshare.com/v2/css?f[]=clash-grotesk@400,500,600,700&display=swap');
 :root { font-family: 'Clash Grotesk', sans-serif; color: #ecebea; background: #111214; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
-*, *::before, *::after { font-family: 'Clash Grotesk', sans-serif !important; }
+*, *::before, *::after { box-sizing: border-box; }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; }
 button, input, select { font: inherit; }
