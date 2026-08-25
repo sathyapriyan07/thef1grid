@@ -177,6 +177,29 @@ export default function RaceDetail() {
           </div>
         </section>
       )}
+      <div className="podium-secondary-row">
+        {[2, 3].map((position) => {
+          const result = raceResults.find((row) => row.position === position)
+          const driverRecord = result ? drivers.data?.find((row) => row.id === result.driver_id) : undefined
+          const podium = result && race?.season_id ? podiums.data?.find((row) => row.driver_id === result.driver_id && row.season_id === race.season_id) : undefined
+          if (!result || !driverRecord) return null
+          return (
+            <article className="podium-secondary-card" key={position}>
+              <div className="podium-secondary-copy">
+                <p className="eyebrow">P{position}</p>
+                <h2>{nameOf(driverRecord)}</h2>
+                <div className="podium-team">
+                  {result.team_id && teamLogos.get(result.team_id) ? <img src={teamLogos.get(result.team_id)} alt="" /> : null}
+                  <span>{teamNames.get(result.team_id ?? '') ?? 'Unknown team'}</span>
+                </div>
+              </div>
+              <div className="podium-secondary-image">
+                {podium?.image_url ? <img src={podium.image_url} alt={`${nameOf(driverRecord)} podium`} /> : <span>NO IMAGE</span>}
+              </div>
+            </article>
+          )
+        })}
+      </div>
       <Table
         title="Race results"
         rows={filter(results.data)}
