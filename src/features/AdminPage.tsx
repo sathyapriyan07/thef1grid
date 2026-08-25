@@ -117,6 +117,8 @@ export default function AdminPage() {
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [podiumDriverId, setPodiumDriverId] = useState('')
+  const [podiumSeasonId, setPodiumSeasonId] = useState('')
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState('')
 
@@ -165,12 +167,18 @@ export default function AdminPage() {
 
   const filteredRows = useMemo(() => {
     const term = searchTerm.trim().toLowerCase()
-    if (!term) return rows.data ?? []
     return (rows.data ?? []).filter((row) => {
+      if (table === 'driver_podiums') {
+        const driverId = podiumDriverId.trim().toLowerCase()
+        const seasonId = podiumSeasonId.trim().toLowerCase()
+        if (driverId && !String(row.driver_id ?? '').toLowerCase().includes(driverId)) return false
+        if (seasonId && !String(row.season_id ?? '').toLowerCase().includes(seasonId)) return false
+      }
+      if (!term) return true
       const displayed = displayRow(row)
       return `${JSON.stringify(row)} ${JSON.stringify(displayed)}`.toLowerCase().includes(term)
     })
-  }, [rows.data, searchTerm, relations.data])
+  }, [rows.data, searchTerm, podiumDriverId, podiumSeasonId, table, relations.data])
 
   const rowSummary = (row: Record<string, unknown>) => {
     const displayed = displayRow(row)
@@ -377,6 +385,8 @@ export default function AdminPage() {
                     setTable(event.target.value as AdminTable)
                     setEditing(null)
                     setSearchTerm('')
+                    setPodiumDriverId('')
+                    setPodiumSeasonId('')
                   }}
                 >
                   {adminTables.map((name) => <option key={name} value={name}>{name.replaceAll('_', ' ')}</option>)}
@@ -387,17 +397,40 @@ export default function AdminPage() {
               </button>
             </div>
             <div className="crud-search-row">
-              <label className="crud-search">
-                SEARCH {table.replaceAll('_', ' ')}
-                <input
-                  type="search"
-                  value={searchTerm}
-                  onChange={(event) => setSearchTerm(event.target.value)}
-                  placeholder="Search any field"
-                />
-              </label>
+              {table === 'driver_podiums' ? (
+                <div className="podium-search-fields">
+                  <label className="crud-search">
+                    SEARCH DRIVER ID
+                    <input
+                      type="search"
+                      value={podiumDriverId}
+                      onChange={(event) => setPodiumDriverId(event.target.value)}
+                      placeholder="Search driver id"
+                    />
+                  </label>
+                  <label className="crud-search">
+                    SEARCH SEASON ID
+                    <input
+                      type="search"
+                      value={podiumSeasonId}
+                      onChange={(event) => setPodiumSeasonId(event.target.value)}
+                      placeholder="Search season id"
+                    />
+                  </label>
+                </div>
+              ) : (
+                <label className="crud-search">
+                  SEARCH {table.replaceAll('_', ' ')}
+                  <input
+                    type="search"
+                    value={searchTerm}
+                    onChange={(event) => setSearchTerm(event.target.value)}
+                    placeholder="Search any field"
+                  />
+                </label>
+              )}
               <span className="crud-result-count">
-                {searchTerm.trim() ? `${filteredRows.length} / ${rows.data?.length ?? 0} records` : `${rows.data?.length ?? 0} records`}
+                {(searchTerm.trim() || podiumDriverId.trim() || podiumSeasonId.trim()) ? `${filteredRows.length} / ${rows.data?.length ?? 0} records` : `${rows.data?.length ?? 0} records`}
               </span>
             </div>
 
@@ -440,10 +473,28 @@ export default function AdminPage() {
                     const value = parsedDraft?.[field]
                     const source = relationFields[field]
                     const options = source ? (relations.data?.[source] ?? []) : []
+                    const searchableRelation = table === 'driver_podiums' && (field === 'driver_id' || field === 'season_id')
                     return (
                       <label key={field}>
                         {labelFor(field)}
-                        {options.length ? (
+                        {searchableRelation ? (
+                          <>
+                            <input
+                              type="search"
+                              list={`podium-${field}-options`}
+                              value={value == null ? '' : String(value)}
+                              onChange={(event) => updateDraft(field, event.target.value)}
+                              placeholder={`Search ${labelFor(field)}`}
+                            />
+                            <datalist id={`podium-${field}-options`}>
+                              {options.map((option: Record<string, unknown>) => (
+                                <option key={String(option.id)} value={String(option.id)}>
+                                  {relationLabel(source, option)}
+                                </option>
+                              ))}
+                            </datalist>
+                          </>
+                        ) : options.length ? (
                           <select
                             value={value == null ? '' : String(value)}
                             onChange={(event) => updateDraft(field, event.target.value)}
