@@ -1,6 +1,13 @@
 import type { Driver, Race, Team } from '../data/f1Data'
 import { supabase } from './supabaseClient'
 
+export const adminTables = [
+  'seasons', 'circuits', 'teams', 'drivers', 'races', 'sessions', 'status',
+  'results', 'qualifying_results', 'sprint_results', 'laps', 'pitstops',
+  'session_entries', 'driver_standings', 'constructor_standings', 'media',
+] as const
+export type AdminTable = typeof adminTables[number]
+
 async function readTable<T>(table: string): Promise<T[]> {
   if (!supabase) return []
   const { data, error } = await supabase.from(table).select('*')
@@ -18,3 +25,27 @@ export const getQualifyingResults = () => readTable<{ id: string; race_id: strin
 export const getSprintResults = () => readTable<{ id: string; race_id: string; driver_id: string; team_id?: string; grid?: number; position?: number; points?: number; laps?: number }>('sprint_results')
 export const getPitstops = () => readTable<{ id: string; race_id: string; driver_id: string; stop_number?: number; lap?: number; time?: string; duration_ms?: number }>('pitstops')
 export const getLaps = () => readTable<{ id: string; race_id: string; driver_id: string; lap_number?: number; position?: number; time_ms?: number }>('laps')
+
+export async function getAdminRows(table: AdminTable): Promise<Record<string, unknown>[]> {
+  return readTable<Record<string, unknown>>(table)
+}
+
+export async function createAdminRow(table: AdminTable, row: Record<string, unknown>) {
+  if (!supabase) throw new Error('Supabase is disabled. Set VITE_USE_SUPABASE=true.')
+  const { data, error } = await supabase.from(table).insert(row).select().single()
+  if (error) throw error
+  return data as Record<string, unknown>
+}
+
+export async function updateAdminRow(table: AdminTable, id: string, row: Record<string, unknown>) {
+  if (!supabase) throw new Error('Supabase is disabled. Set VITE_USE_SUPABASE=true.')
+  const { data, error } = await supabase.from(table).update(row).eq('id', id).select().single()
+  if (error) throw error
+  return data as Record<string, unknown>
+}
+
+export async function deleteAdminRow(table: AdminTable, id: string) {
+  if (!supabase) throw new Error('Supabase is disabled. Set VITE_USE_SUPABASE=true.')
+  const { error } = await supabase.from(table).delete().eq('id', id)
+  if (error) throw error
+}
