@@ -90,7 +90,14 @@ h1 { font-size: clamp(48px, 6.4vw, 92px); }
 @media (max-width: 800px) { h1, .archive-page h1, .detail-page h1 { font-size: 54px; }.next-race-panel h2 { font-size: 48px; }.driver-highlight h3 { font-size: 44px; } }
 .table-team-logo { width: 22px; height: 22px; object-fit: contain; flex: 0 0 22px; }
 .race-detail-page h1 { font-size: clamp(44px, 5.5vw, 76px); }
+.podium-highlight { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 360px); gap: 28px; align-items: stretch; margin: 58px 0 72px; border: 2px solid var(--line); background: var(--muted); }
+.podium-highlight-copy { display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 28px; }
+.podium-highlight-copy h2 { font-size: clamp(28px, 4vw, 52px); line-height: .95; }
+.podium-highlight-copy > p:last-child { color: #a1a1aa; font: 12px 'DM Mono'; }
+.podium-highlight-image { min-height: 240px; display: grid; place-items: center; overflow: hidden; border-left: 2px solid var(--line); background: var(--ink); color: #a1a1aa; font: 10px 'DM Mono'; }
+.podium-highlight-image img { width: 100%; height: 100%; max-height: 360px; object-fit: contain; }
 @media (max-width: 800px) { .race-detail-page h1 { font-size: 36px; line-height: .95; } }
+@media (max-width: 800px) { .podium-highlight { grid-template-columns: 1fr; margin: 42px 0 58px; }.podium-highlight-image { min-height: 220px; border-left: 0; border-top: 2px solid var(--line); }.podium-highlight-copy { padding: 22px; } }
 .app-shell { background: var(--ink); }
 .kinetic-marquee { width: calc(100% + 11.2vw); margin-left: -5.6vw; overflow: hidden; border-top: 2px solid var(--line); border-bottom: 2px solid var(--line); white-space: nowrap; }
 .marquee-track { display: inline-flex; align-items: center; min-width: max-content; gap: 28px; padding: 16px 24px; animation: marquee-scroll 24s linear infinite; font: 700 clamp(20px, 3vw, 42px)/1 'Formula1', sans-serif; text-transform: uppercase; }
@@ -107,3 +114,9 @@ h1 { font-size: clamp(48px, 6.4vw, 92px); }
 .outline-button, .danger-button, .icon-button, .search-box, .admin-form input, .import-controls input, .import-controls select, .crud-toolbar select, .crud-search input, .record-form input, .record-form select { border-radius: 0; }
 @keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .marquee-track { animation-play-state: paused; } *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+.race-detail-page h1 { font-size: clamp(40px, 5vw, 68px); }
+.race-results .table-head { font-size: 8px; }
+.race-results .table-row { font-size: 10px; }
+.race-results .driver-cell { font-size: 12px; }
+.table-team-logo { width: 26px; height: 26px; padding: 2px; object-fit: contain; flex: 0 0 26px; }
+@media (max-width: 800px) { .race-detail-page h1 { font-size: 32px; }.race-results .driver-cell { font-size: 11px; }.race-results .table-row { padding-top: 13px; padding-bottom: 13px; } }

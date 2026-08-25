@@ -45,6 +45,7 @@ const editableFields: Record<AdminTable, string[]> = {
   driver_standings: ['external_ref', 'season_id', 'race_id', 'driver_id', 'team_id', 'points', 'position', 'wins'],
   constructor_standings: ['external_ref', 'season_id', 'race_id', 'team_id', 'points', 'position', 'wins'],
   media: ['entity_type', 'entity_id', 'url', 'type'],
+  driver_podiums: ['driver_id', 'season_id', 'image_url'],
 }
 
 const systemFields = new Set(['id', 'source', 'is_overridden', 'overrides', 'created_at', 'updated_at'])
@@ -76,6 +77,7 @@ const summaryFields: Partial<Record<AdminTable, string[]>> = {
   driver_standings: ['driver_id', 'season_id', 'race_id', 'team_id', 'points', 'position'],
   constructor_standings: ['team_id', 'season_id', 'race_id', 'points', 'position'],
   media: ['entity_type', 'entity_id', 'type', 'url'],
+  driver_podiums: ['driver_id', 'season_id', 'image_url'],
 }
 
 function relationLabel(table: typeof relationSources[number], row: Record<string, unknown>) {
@@ -224,7 +226,7 @@ export default function AdminPage() {
     setEditing(row)
     setDraft(JSON.stringify(row, null, 2))
     setImageFile(null)
-    setImagePreview(String(table === 'drivers' ? row.headshot_url ?? '' : row.logo_url ?? ''))
+    setImagePreview(String(table === 'drivers' ? row.headshot_url ?? '' : table === 'teams' ? row.logo_url ?? '' : row.image_url ?? ''))
     setMessage('')
   }
 
@@ -261,6 +263,19 @@ export default function AdminPage() {
     return supabase.storage.from('team-logos').getPublicUrl(path).data.publicUrl
   }
 
+  async function uploadPodiumImage(podiumId: string, file: File) {
+    if (!supabase) throw new Error('Supabase is disabled. Set VITE_USE_SUPABASE=true.')
+    const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+    const path = `${podiumId}/${crypto.randomUUID()}.${extension}`
+    const { error } = await supabase.storage.from('podium-images').upload(path, file, {
+      cacheControl: '3600',
+      contentType: file.type,
+      upsert: false,
+    })
+    if (error) throw error
+    return supabase.storage.from('podium-images').getPublicUrl(path).data.publicUrl
+  }
+
   function updateDraft(field: string, value: string) {
     setDraft((current) => JSON.stringify({ ...JSON.parse(current), [field]: value === '' ? null : value }, null, 2))
   }
@@ -280,6 +295,10 @@ export default function AdminPage() {
       if (table === 'teams' && imageFile) {
         const logoUrl = await uploadTeamLogo(String(saved.id), imageFile)
         await updateAdminRow('teams', String(saved.id), { logo_url: logoUrl })
+      }
+      if (table === 'driver_podiums' && imageFile) {
+        const imageUrl = await uploadPodiumImage(String(saved.id), imageFile)
+        await updateAdminRow('driver_podiums', String(saved.id), { image_url: imageUrl })
       }
       setEditing(null)
       setImageFile(null)
@@ -391,13 +410,13 @@ export default function AdminPage() {
                   </div>
                   <button className="text-button" onClick={() => setEditing(null)}>Cancel</button>
                 </div>
-                {(table === 'drivers' || table === 'teams') && (
+                {(table === 'drivers' || table === 'teams' || table === 'driver_podiums') && (
                   <div className="driver-image-upload">
                     <div className="driver-image-preview">
-                      {imagePreview ? <img src={imagePreview} alt={table === 'drivers' ? 'Driver preview' : 'Team logo preview'} /> : <span>NO IMAGE</span>}
+                      {imagePreview ? <img src={imagePreview} alt={table === 'drivers' ? 'Driver preview' : table === 'teams' ? 'Team logo preview' : 'Podium image preview'} /> : <span>NO IMAGE</span>}
                     </div>
                     <label className="file-input-label">
-                      {table === 'drivers' ? 'Driver image' : 'Team logo'}
+                      {table === 'drivers' ? 'Driver image' : table === 'teams' ? 'Team logo' : 'Driver podium image'}
                       <input
                         type="file"
                         accept="image/jpeg,image/png,image/webp"
@@ -470,7 +489,7 @@ export default function AdminPage() {
 
                     return (
                       <div className="crud-row" key={String(row.id)}>
-                        {table === 'drivers' && row.headshot_url ? <img className="crud-row-avatar" src={String(row.headshot_url)} alt="" /> : table === 'teams' && row.logo_url ? <img className="crud-row-avatar" src={String(row.logo_url)} alt="" /> : <code>{String(row.id)}</code>}
+                        {table === 'drivers' && row.headshot_url ? <img className="crud-row-avatar" src={String(row.headshot_url)} alt="" /> : table === 'teams' && row.logo_url ? <img className="crud-row-avatar" src={String(row.logo_url)} alt="" /> : table === 'driver_podiums' && row.image_url ? <img className="crud-row-avatar" src={String(row.image_url)} alt="" /> : <code>{String(row.id)}</code>}
                         <div className="crud-row-body">
                           <strong>{summary.title}</strong>
                           <div className="crud-row-fields">

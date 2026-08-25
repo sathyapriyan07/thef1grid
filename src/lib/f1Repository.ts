@@ -4,7 +4,7 @@ import { supabase } from './supabaseClient'
 export const adminTables = [
   'seasons', 'circuits', 'teams', 'drivers', 'races', 'sessions', 'status',
   'results', 'qualifying_results', 'sprint_results', 'laps', 'pitstops',
-  'session_entries', 'driver_standings', 'constructor_standings', 'media',
+  'session_entries', 'driver_standings', 'constructor_standings', 'media', 'driver_podiums',
 ] as const
 export type AdminTable = typeof adminTables[number]
 
@@ -30,6 +30,7 @@ export const getQualifyingResults = () => readTable<{ id: string; race_id: strin
 export const getSprintResults = () => readTable<{ id: string; race_id: string; driver_id: string; team_id?: string; grid?: number; position?: number; points?: number; laps?: number }>('sprint_results')
 export const getPitstops = () => readTable<{ id: string; race_id: string; driver_id: string; stop_number?: number; lap?: number; time?: string; duration_ms?: number }>('pitstops')
 export const getLaps = () => readTable<{ id: string; race_id: string; driver_id: string; lap_number?: number; position?: number; time_ms?: number }>('laps')
+export const getDriverPodiums = () => readTable<{ id: string; driver_id: string; season_id: string; image_url?: string }>('driver_podiums')
 
 export async function getAdminRows(table: AdminTable): Promise<Record<string, unknown>[]> {
   return readTable<Record<string, unknown>>(table)

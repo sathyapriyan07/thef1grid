@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import {
   getDrivers,
+  getDriverPodiums,
   getLaps,
   getPitstops,
   getQualifyingResults,
@@ -109,7 +110,14 @@ export default function RaceDetail() {
   });
   const pitstops = useQuery({ queryKey: ["pitstops"], queryFn: getPitstops });
   const laps = useQuery({ queryKey: ["laps"], queryFn: getLaps });
+  const podiums = useQuery({ queryKey: ["driver_podiums"], queryFn: getDriverPodiums });
   const race = races.data?.find((row) => row.id === id);
+  const raceResults = (results.data ?? []).filter((row) => row.race_id === id);
+  const winner = raceResults.find((row) => row.position === 1) ?? raceResults[0];
+  const winnerDriver = winner ? drivers.data?.find((row) => row.id === winner.driver_id) : undefined;
+  const winnerPodium = winner && race?.season_id
+    ? podiums.data?.find((row) => row.driver_id === winner.driver_id && row.season_id === race.season_id)
+    : undefined;
   const driverNames = useMemo(
     () => new Map((drivers.data ?? []).map((row) => [row.id, nameOf(row)])),
     [drivers.data],
@@ -127,7 +135,7 @@ export default function RaceDetail() {
   const driver = (row: Row) =>
     driverNames.get(row.driver_id) ?? "Unknown driver";
   const team = (row: Row) => teamNames.get(row.team_id ?? "") ?? "Unknown team";
-  if (races.isLoading || drivers.isLoading || teams.isLoading)
+  if (races.isLoading || drivers.isLoading || teams.isLoading || podiums.isLoading)
     return (
       <section className="empty-state">
         <strong>Loading imported race data...</strong>
@@ -153,6 +161,18 @@ export default function RaceDetail() {
         {race.date ?? "Date pending"} / {race.circuit ?? "Circuit pending"} /{" "}
         {race.country ?? ""}
       </p>
+      {winner && winnerDriver && (
+        <section className="podium-highlight">
+          <div className="podium-highlight-copy">
+            <p className="eyebrow">RACE WINNER / {race.date?.slice(0, 4) ?? "SEASON"}</p>
+            <h2>{nameOf(winnerDriver)}</h2>
+            <p>{winnerPodium?.image_url ? "Podium archive image" : "No podium image uploaded for this season yet."}</p>
+          </div>
+          <div className="podium-highlight-image">
+            {winnerPodium?.image_url ? <img src={winnerPodium.image_url} alt={`${nameOf(winnerDriver)} podium`} /> : <span>NO PODIUM IMAGE</span>}
+          </div>
+        </section>
+      )}
       <Table
         title="Race results"
         rows={filter(results.data)}
