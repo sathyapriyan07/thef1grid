@@ -90,14 +90,16 @@ h1 { font-size: clamp(48px, 6.4vw, 92px); }
 @media (max-width: 800px) { h1, .archive-page h1, .detail-page h1 { font-size: 54px; }.next-race-panel h2 { font-size: 48px; }.driver-highlight h3 { font-size: 44px; } }
 .table-team-logo { width: 22px; height: 22px; object-fit: contain; flex: 0 0 22px; }
 .race-detail-page h1 { font-size: clamp(44px, 5.5vw, 76px); }
-.podium-highlight { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 360px); gap: 28px; align-items: stretch; margin: 58px 0 72px; border: 2px solid var(--line); background: var(--muted); }
+.podium-highlight { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 360px); gap: 24px; align-items: stretch; margin: 58px 0 72px; border: 2px solid var(--line); background: var(--muted); overflow: hidden; }
 .podium-highlight-copy { display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 28px; }
 .podium-highlight-copy h2 { font-size: clamp(28px, 4vw, 52px); line-height: .95; }
 .podium-highlight-copy > p:last-child { color: #a1a1aa; font: 12px 'DM Mono'; }
-.podium-highlight-image { min-height: 240px; display: grid; place-items: center; overflow: hidden; border-left: 2px solid var(--line); background: var(--ink); color: #a1a1aa; font: 10px 'DM Mono'; }
-.podium-highlight-image img { width: 100%; height: 100%; max-height: 360px; object-fit: contain; }
+.podium-team { display: flex; align-items: center; gap: 10px; color: var(--paper); font: 600 14px 'Formula1', sans-serif; text-transform: uppercase; }
+.podium-team img { width: 28px; height: 28px; object-fit: contain; }
+.podium-highlight-image { min-height: 240px; display: flex; align-items: end; justify-content: end; overflow: hidden; background: var(--muted); color: #a1a1aa; font: 10px 'DM Mono'; }
+.podium-highlight-image img { width: 100%; height: 100%; max-height: 360px; object-fit: contain; object-position: right bottom; align-self: end; }
 @media (max-width: 800px) { .race-detail-page h1 { font-size: 36px; line-height: .95; } }
-@media (max-width: 800px) { .podium-highlight { grid-template-columns: 1fr; margin: 42px 0 58px; }.podium-highlight-image { min-height: 220px; border-left: 0; border-top: 2px solid var(--line); }.podium-highlight-copy { padding: 22px; } }
+@media (max-width: 800px) { .podium-highlight { grid-template-columns: 45% 55%; gap: 0; margin: 42px 0 58px; }.podium-highlight-image { min-height: 250px; max-height: 290px; }.podium-highlight-copy { gap: 10px; padding: 18px 14px; }.podium-highlight-copy h2 { font-size: 22px; line-height: 1; white-space: nowrap; overflow: visible; }.podium-highlight-copy .eyebrow { font-size: 8px; line-height: 1.35; }.podium-team { gap: 7px; font-size: 10px; overflow-wrap: anywhere; }.podium-team img { width: 24px; height: 24px; flex: 0 0 24px; } }
 .app-shell { background: var(--ink); }
 .kinetic-marquee { width: calc(100% + 11.2vw); margin-left: -5.6vw; overflow: hidden; border-top: 2px solid var(--line); border-bottom: 2px solid var(--line); white-space: nowrap; }
 .marquee-track { display: inline-flex; align-items: center; min-width: max-content; gap: 28px; padding: 16px 24px; animation: marquee-scroll 24s linear infinite; font: 700 clamp(20px, 3vw, 42px)/1 'Formula1', sans-serif; text-transform: uppercase; }

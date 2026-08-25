@@ -166,7 +166,11 @@ export default function RaceDetail() {
           <div className="podium-highlight-copy">
             <p className="eyebrow">RACE WINNER / {race.date?.slice(0, 4) ?? "SEASON"}</p>
             <h2>{nameOf(winnerDriver)}</h2>
-            <p>{winnerPodium?.image_url ? "Podium archive image" : "No podium image uploaded for this season yet."}</p>
+            <div className="podium-team">
+              {winner?.team_id && teamLogos.get(winner.team_id) ? <img src={teamLogos.get(winner.team_id)} alt="" /> : null}
+              <span>{teamNames.get(winner?.team_id ?? "") ?? "Unknown team"}</span>
+            </div>
+            {!winnerPodium?.image_url && <p>No podium image uploaded for this season yet.</p>}
           </div>
           <div className="podium-highlight-image">
             {winnerPodium?.image_url ? <img src={winnerPodium.image_url} alt={`${nameOf(winnerDriver)} podium`} /> : <span>NO PODIUM IMAGE</span>}
