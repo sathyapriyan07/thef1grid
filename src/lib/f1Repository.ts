@@ -10,9 +10,14 @@ export type AdminTable = typeof adminTables[number]
 
 async function readTable<T>(table: string): Promise<T[]> {
   if (!supabase) return []
-  const { data, error } = await supabase.from(table).select('*')
-  if (error) throw error
-  return (data ?? []) as T[]
+  const pageSize = 1000
+  const rows: T[] = []
+  for (let offset = 0; ; offset += pageSize) {
+    const { data, error } = await supabase.from(table).select('*').range(offset, offset + pageSize - 1)
+    if (error) throw error
+    rows.push(...((data ?? []) as T[]))
+    if (!data || data.length < pageSize) return rows
+  }
 }
 
 export const getDrivers = () => readTable<Driver>('drivers')

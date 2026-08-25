@@ -184,7 +184,6 @@ export default function AdminPage() {
       ?? row.id
 
     const chips = orderedKeys
-      .slice(0, 5)
       .map((key) => [key, displayed[key]] as const)
       .filter(([, value]) => value != null && value !== '')
 
@@ -450,11 +449,11 @@ export default function AdminPage() {
                     const displayed = displayRow(row)
                     const summary = rowSummary(row)
                     const chips = new Set(summary.chips.map(([key]) => key))
-                    const extras = visibleEntries(displayed).filter(([key]) => !chips.has(key)).slice(0, 2)
+                    const extras = visibleEntries(displayed).filter(([key]) => !chips.has(key))
 
                     return (
                       <div className="crud-row" key={String(row.id)}>
-                        {table === 'drivers' && row.headshot_url ? <img className="crud-row-avatar" src={String(row.headshot_url)} alt="" /> : <code>{String(row.id).slice(0, 8)}</code>}
+                        {table === 'drivers' && row.headshot_url ? <img className="crud-row-avatar" src={String(row.headshot_url)} alt="" /> : <code>{String(row.id)}</code>}
                         <div className="crud-row-body">
                           <strong>{summary.title}</strong>
                           <div className="crud-row-fields">

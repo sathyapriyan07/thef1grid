@@ -260,7 +260,7 @@ function Dashboard() {
             </Link>
           </div>
           <div className="calendar-list">
-            {(races.data ?? []).slice(0, 6).map((race) => (
+            {(races.data ?? []).map((race) => (
               <Link
                 key={race.id}
                 className="calendar-item"
