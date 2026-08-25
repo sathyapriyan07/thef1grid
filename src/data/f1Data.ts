@@ -9,6 +9,7 @@ export type Driver = {
   wins?: number;
   color?: string;
   nationality?: string;
+  dob?: string;
 };
 export type Race = {
   id: string;
